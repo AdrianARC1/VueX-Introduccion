@@ -1,0 +1,146 @@
+<template>
+  <section>
+    <div id="asistentes">
+        <h1>Asistentes a la sesión en directo</h1>
+        <ul>
+            <li v-for="asistente in asistentes.slice().reverse()" :key="asistente">{{ asistente }}</li>
+        </ul>
+    </div>
+    <div id="caja-form">
+        <div id="add">
+            <input type="text" placeholder="Nombre del asistente" v-model="nombre_asistente">
+            <button @click="addAsist">Añadir asistente</button>
+            <button @click="delAsist">Eliminar asistente</button>
+        </div>
+    </div>
+    <cite v-if="mostrar==true">{{ mensaje }}</cite>
+  </section>
+</template>
+
+<script>
+export default {
+    name: 'AsistentesDirecto',
+    data(){
+        return{
+            nombre_asistente: '',
+            mensaje: '',
+            mostrar: false,
+            encontrado: false,
+            asistentes: ['Luis','Fortu']
+        }
+    },
+    methods:{
+        addAsist(){
+            this.asistentes.push(this.nombre_asistente)
+            this.nombre_asistente = ''
+            localStorage.setItem('Asistentes', JSON.stringify(this.asistentes))
+        },
+        delAsist(){
+            if(this.nombre_asistente===''){
+                this.mostrar=true
+                this.mensaje='Debes introducir el nombre del asistente que quieres eliminar'
+            }else{
+                for(let i=0; i<this.asistentes.length; i++){
+                    if(this.nombre_asistente===this.asistentes[i]){
+                        this.encontrado=true
+                        this.mostrar=false
+
+                        let indice= this.asistentes.indexOf(this.nombre_asistente)
+                        this.asistentes.splice(indice,1)
+                        localStorage.removeItem('Asistentes')
+                    }
+                }
+                if(this.encontrado===true){
+                    this.mostrar=false
+                }else{
+                    this.mostrar=true
+                    this.mensaje="El asistente introducido no está en la lista"
+                }
+            }
+        }
+    },
+    mounted(){
+        let data = localStorage.getItem('Asistentes')
+        if(data!=null){
+            this.asistentes=JSON.parse(data)
+        }
+    }
+
+}
+</script>
+
+<style lang="sass" scoped>
+@mixin flex
+    display: flex
+    justify-content: center
+    align-items: center
+
+@mixin input_botones
+    border-radius: 10px
+    border: none
+    font-style: italic
+    font-weight: bold
+    padding: .5rem 1rem
+    color: gray
+
+    // scroll personalizado
+ul::-webkit-scrollbar
+    width: 7px
+    border-radius: 10px
+ul::-webkit-scrollbar-thumb
+    background: #1e2761
+    border-radius: 10px
+
+
+section
+    @include flex
+    padding: 1rem
+    flex-direction: column
+    height: 100vh
+    background: #1e2761
+    #asistentes
+        width: 50%
+        padding: 1rem
+        border-radius: 10px
+        background: white
+        box-shadow: 1px 1px 3px black
+        h1
+            color: #7a2048
+        ul
+            list-style: none
+            overflow: scroll
+            overflow-x: hidden
+            height: 100px
+            li
+                margin: 10px 0
+                font-size: 18px
+                color: #408ec6
+                font-weight: bold
+                border-bottom: 1px solid
+                width: 95%
+    #caja-form
+        width: 50%
+        #add
+            width: 100%
+            display: flex
+            justify-content: space-between
+            margin: 10px 0
+            input
+                @include input_botones
+                width: 50%
+                outline: none
+            button
+                @include input_botones
+                cursor: pointer
+                transition: .4s
+                &:hover
+                    background: #7a2048
+                    color: white
+    
+        cite
+            color: orange
+
+
+
+    
+</style>
