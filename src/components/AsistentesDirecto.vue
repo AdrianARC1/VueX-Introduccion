@@ -3,60 +3,30 @@
     <div id="asistentes">
         <h1>Asistentes a la sesión en directo</h1>
         <ul>
-            <li v-for="asistente in asistentes.slice().reverse()" :key="asistente">{{ asistente }}</li>
+            <li v-for="asistente in $store.state.asistentes.slice().reverse()" :key="asistente">{{ asistente }}</li>
         </ul>
     </div>
     <div id="caja-form">
         <div id="add">
-            <input type="text" placeholder="Nombre del asistente" v-model="nombre_asistente">
+            <input type="text" placeholder="Nombre del asistente" v-model="$store.state.nombre_asistente">
             <button @click="addAsist">Añadir asistente</button>
             <button @click="delAsist">Eliminar asistente</button>
         </div>
     </div>
-    <cite v-if="mostrar==true">{{ mensaje }}</cite>
+    <cite v-if="$store.state.mostrar==true">{{ $store.state.mensaje }}</cite>
+    <h1>{{ $store.state.texto }}</h1>
   </section>
 </template>
 
 <script>
 export default {
     name: 'AsistentesDirecto',
-    data(){
-        return{
-            nombre_asistente: '',
-            mensaje: '',
-            mostrar: false,
-            encontrado: false,
-            asistentes: ['Luis','Fortu']
-        }
-    },
     methods:{
         addAsist(){
-            this.asistentes.push(this.nombre_asistente)
-            this.nombre_asistente = ''
-            localStorage.setItem('Asistentes', JSON.stringify(this.asistentes))
+            this.$store.dispatch('accionAddAsist')
         },
         delAsist(){
-            if(this.nombre_asistente===''){
-                this.mostrar=true
-                this.mensaje='Debes introducir el nombre del asistente que quieres eliminar'
-            }else{
-                for(let i=0; i<this.asistentes.length; i++){
-                    if(this.nombre_asistente===this.asistentes[i]){
-                        this.encontrado=true
-                        this.mostrar=false
-
-                        let indice= this.asistentes.indexOf(this.nombre_asistente)
-                        this.asistentes.splice(indice,1)
-                        localStorage.removeItem('Asistentes')
-                    }
-                }
-                if(this.encontrado===true){
-                    this.mostrar=false
-                }else{
-                    this.mostrar=true
-                    this.mensaje="El asistente introducido no está en la lista"
-                }
-            }
+            this.$store.dispatch('accionDelAsist')
         }
     },
     mounted(){
