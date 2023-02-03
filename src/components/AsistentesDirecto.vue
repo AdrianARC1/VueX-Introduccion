@@ -11,6 +11,7 @@
             <input type="text" placeholder="Nombre del asistente" v-model="$store.state.nombre_asistente">
             <button @click="addAsist">Añadir asistente</button>
             <button @click="delAsist">Eliminar asistente</button>
+            <button @click="prueba">Alerta  </button>
         </div>
     </div>
     <cite v-if="$store.state.mostrar==true">{{ $store.state.mensaje }}</cite>
@@ -22,6 +23,20 @@
 export default {
     name: 'AsistentesDirecto',
     methods:{
+        prueba(){
+            this.$swal({
+                title: 'How old are you?',
+                icon: 'question',
+                input: 'range',
+                inputLabel: 'Your age',
+                inputAttributes: {
+                    min: 8,
+                    max: 120,
+                    step: 1
+                },
+                inputValue: 25
+                })
+        },
         addAsist(){
             this.$store.dispatch('accionAddAsist')
         },
